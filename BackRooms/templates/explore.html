@@ -6,7 +6,8 @@
 <body>
     <h1>Explore the Backrooms</h1>
     {% if level %}
-    <p>You have encountered: {{ level }}</p>
+    <p>You have encountered: {{ level.name }} - {{ level.description }}</p>
+    <p>Be on the lookout for the {{ level.monster }}!</p>
     {% else %}
     <form action="{{ url_for('explore') }}" method="post">
         <input type="submit" value="Explore a Random Level">
