@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Explore the Backrooms</title>
+</head>
+<body>
+    <h1>Explore the Backrooms</h1>
+    {% if level %}
+    <p>You have encountered: {{ level }}</p>
+    {% else %}
+    <form action="{{ url_for('explore') }}" method="post">
+        <input type="submit" value="Explore a Random Level">
+    </form>
+    {% endif %}
+</body>
+</html>
