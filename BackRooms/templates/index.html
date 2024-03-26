@@ -1,19 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <title>The Backrooms</title>
-</head>
-<body>
-    <h1>Welcome to the Backrooms</h1>
-    <p>Player Health: {{ player.health }}</p>
-    <p>Player Attack: {{ player.attack }}</p>
-    <p>Player Defense: {{ player.defense }}</p>
-    <p>Explore the mysterious and eerie Backrooms levels:</p>
-    <ul>
-        {% for level in backrooms_levels %}
-        <li>{{ level.name }} - {{ level.description }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('explore') }}">Explore the Backrooms</a>
-</body>
+  <head>
+    <title>Text Adventure Game</title>
+  </head>
+  <body>
+    <h1>Text Adventure Game</h1>
+    <p><a href="/game">Start Game</a></p>
+  </body>
 </html>

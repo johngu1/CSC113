@@ -1,65 +1,94 @@
-from flask import Flask, render_template, request, session
-import random
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
 
-# Player and monster stats
-class Entity:
-    def __init__(self, name, health, attack, defense):
-        self.name = name
-        self.health = health
-        self.attack = attack
-        self.defense = defense
+# Define a dictionary to map buttons to their corresponding actions
+buttons = {
+    "n": "move_north",
+    "s": "move_south",
+    "e": "move_east",
+    "w": "move_west",
+    "look": "look_around",
+    "take": "take_item",
+    "use": "use_item",
+    "inventory": "show_inventory"
+}
 
-player = Entity('Player', 100, 10, 5)
+# Define a function for each button action
+def move_north():
+    return "You move north."
 
-backrooms_levels = [
-    {"name": "Level 0: The Lobby", "description": "A seemingly endless beige expanse with a yellow-tinted lighting, the sound of a constant hum.", "monster": Entity('Skin-Stealer', 50, 15, 2)},
-    {"name": "Level 1: The Halls", "description": "Winding corridors of the same dull, beige walls, with an occasional door leading to other levels.", "monster": Entity('Hounds', 30, 8, 3)},
-    {"name": "Level 2: The Offices", "description": "A maze of cubicles and office spaces, with the occasional flicker of fluorescent lights.", "monster": Entity('Amalgam', 70, 12, 4)},
-    {"name": "Level 3: The Kitchens", "description": "Large, industrial-style kitchens with long countertops and the faint smell of stale food.", "monster": Entity('Faceless', 40, 10, 6)},
-    {"name": "Level 4: The Sewers", "description": "Dark, damp tunnels with the sound of dripping water and the occasional scurrying of unseen creatures.", "monster": Entity('Sewer Crawlers', 25, 6, 1)},
-    {"name": "Level 5: The Emptiness", "description": "A vast, featureless void with no discernible walls or ceiling, the only sound being the echoes of your own footsteps.", "monster": Entity('The Watcher', 80, 18, 8)},
-    {"name": "Level 6: The Suburbs", "description": "Rows of identical, abandoned houses with overgrown yards and the occasional flickering streetlight.", "monster": Entity('The Suburban Entity', 60, 14, 3)},
-    {"name": "Level 7: The Hotel", "description": "A massive, dilapidated hotel with a grand lobby and long, winding corridors leading to countless rooms.", "monster": Entity('The Bellhop', 45, 12, 7)},
-    {"name": "Level 8: The Wilderness", "description": "A dense, tangled forest with twisted, gnarled trees and the distant sounds of unknown creatures.", "monster": Entity('Wendigo', 90, 16, 5)},
-    {"name": "Level 9: The Abyss", "description": "An endless, dark chasm with no visible bottom, the air filled with an unearthly howling.", "monster": Entity('The Unseen', 75, 20, 10)},
-    {"name": "Level 10: The Megaplex", "description": "A sprawling, neon-lit complex of theaters, arcades, and abandoned stores, the air thick with the stale smell of popcorn.", "monster": Entity('The Entertainer', 55, 13, 4)}
-]
+def move_south():
+    return "You move south."
 
-@app.route('/')
+def move_east():
+    return "You move east."
+
+def move_west():
+    return "You move west."
+
+def look_around():
+    return "You look around."
+
+def take_item():
+    return "You take an item."
+
+def use_item():
+    return "You use an item."
+
+def show_inventory():
+    return "Your inventory is: "
+
+# Define a function to handle user input and execute the corresponding action
+def handle_input(input_):
+    input_ = input_.lower()
+    if input_ in buttons:
+        return buttons[input_]()
+    else:
+        return "Invalid input. Type 'help' for a list of available commands."
+
+# Define a function to generate a random room and items
+def generate_room():
+    room = random.choice(["Forest", "Dungeon", "Cave", "Tavern"])
+    items = []
+    for i in range(random.randint(1, 3)):
+        items.append(random.choice(["Sword", "Potion", "Key", "Map"])
+    return room, items
+
+# Define a function to print the room and items
+def print_room(room, items):
+    print(f"You are in a {room}.")
+    for item in items:
+        print(f"You see a {item}.")
+
+# Define a route for the root URL
+@app.route("/")
 def index():
-    if 'player' not in session:
-        session['player'] = vars(player)
-    return render_template('index.html', player=session['player'], backrooms_levels=backrooms_levels)
+    return render_template("index.html")
 
-@app.route('/explore', methods=['GET', 'POST'])
-def explore():
-    if request.method == 'POST':
-        action = request.form['action']
-        current_level = random.choice(backrooms_levels)
-        monster = current_level['monster']
-        player = Entity(**session['player'])
+# Define a route for the game
+@app.route("/game")
+def game():
+    room, items = generate_room()
+    user_input = request.args.get("input")
+    if user_input:
+        handle_input(user_input)
+    return render_template("game.html", room=room, items=items)
 
-        if action == 'attack':
-            player.health -= max(monster.attack - player.defense, 0)
-            monster.health -= max(player.attack - monster.defense, 0)
-        elif action == 'defend':
-            player.defense += 2
-        elif action == 'block':
-            player.defense += 5
+# Define a route for the inventory
+@app.route("/inventory")
+def inventory():
+    return render_template("inventory.html")
 
-        session['player'] = vars(player)
+# Define a route for the help page
+@app.route("/help")
+def help():
+    return render_template("help.html")
 
-        if player.health <= 0:
-            return render_template('game_over.html')
-        elif monster.health <= 0:
-            return render_template('explore.html', level=current_level, player=session['player'])
-        else:
-            return render_template('explore.html', level=current_level, player=session['player'])
+# Define a route for the about page
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
-    return render_template('explore.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run()

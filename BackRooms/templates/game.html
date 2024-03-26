@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Text Adventure Game</title>
+  </head>
+  <body>
+    <h1>You are in a {{ room }}.</h1>
+    <ul>
+      {% for item in items %}
+        <li>You see a {{ item }}.</li>
+      {% endfor %}
+    </ul>
+    <p>What do you want to do?</p>
+    <form action="/game" method="get">
+      <input type="text" name="input" placeholder="Type 'look' or 'take' or 'use' or 'move' followed by a direction (n, s, e, w)">
+      <button type="submit">Go</button>
+    </form>
+  </body>
+</html>
