@@ -52,7 +52,7 @@ def generate_room():
     room = random.choice(["Forest", "Dungeon", "Cave", "Tavern"])
     items = []
     for i in range(random.randint(1, 3)):
-        items.append(random.choice(["Sword", "Potion", "Key", "Map"])
+        items.append(random.choice(["Sword", "Potion", "Key", "Map"]))
     return room, items
 
 # Define a function to print the room and items
