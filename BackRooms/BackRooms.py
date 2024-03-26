@@ -1,51 +1,49 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import random
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
-# Define a dictionary to map buttons to their corresponding actions
-buttons = {
-    "n": "move_north",
-    "s": "move_south",
-    "e": "move_east",
-    "w": "move_west",
-    "look": "look_around",
-    "take": "take_item",
-    "use": "use_item",
-    "inventory": "show_inventory"
-}
+# Player and monster stats
+class Entity:
+    def __init__(self, name, health, attack, defense):
+        self.name = name
+        self.health = health
+        self.attack = attack
+        self.defense = defense
 
-# Define a function for each button action
-def move_north():
-    print("You move north.")
+player = Entity('Player', 100, 10, 5)
 
-def move_south():
-    print("You move south.")
+backrooms_levels = [
+    # Your Backrooms level and monster data
+]
 
-def move_east():
-    print("You move east.")
+@app.route('/')
+def index():
+    if 'player' not in session:
+        session['player'] = vars(player)
+    return render_template('index.html', player=session['player'], backrooms_levels=backrooms_levels)
 
-def move_west():
-    print("You move west.")
+@app.route('/play', methods=['GET', 'POST'])
+def play():
+    if request.method == 'POST':
+        action = request.form['action']
+        current_level = random.choice(backrooms_levels)
+        monster = current_level['monster']
+        player = Entity(**session['player'])
 
-def look_around():
-    print("You look around.")
+        # Your combat logic here
 
-def take_item():
-    print("You take an item.")
+        session['player'] = vars(player)
 
-def use_item():
-    print("You use an item.")
+        if player.health <= 0:
+            return render_template('game_over.html')
+        elif monster.health <= 0:
+            return render_template('play.html', level=current_level, player=session['player'])
+        else:
+            return render_template('play.html', level=current_level, player=session['player'])
 
-def show_inventory():
-    print("Your inventory is empty.")
+    return render_template('play.html')
 
-# Define a route for each button press
-@app.route("/button/<button>")
-def button_pressed(button):
-    # Call the corresponding function based on the button press
-    buttons[button]()
-    return "Button pressed!"
-
-# Test the app
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

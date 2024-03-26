@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backrooms Game</title>
+</head>
+<body>
+    <h1>Explore the Backrooms</h1>
+    {% if level %}
+    <p>You have encountered: {{ level.name }} - {{ level.description }}</p>
+    <p>Be on the lookout for the {{ level.monster.name }}!</p>
+    <p>Monster Health: {{ level.monster.health }}</p>
+    <p>Monster Attack: {{ level.monster.attack }}</p>
+    <p>Monster Defense: {{ level.monster.defense }}</p>
+    <form action="{{ url_for('play') }}" method="post">
+        <input type="submit" name="action" value="attack">
+        <input type="submit" name="action" value="defend">
+        <input type="submit" name="action" value="block">
+    </form>
+    {% else %}
+    <form action="{{ url_for('play') }}" method="post">
+        <input type="submit" value="Explore a Random Level">
+    </form>
+    {% endif %}
+</body>
+</html>
